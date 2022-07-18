@@ -1,26 +1,32 @@
-#include <urcu/flavor.h>
+#include <urcu/pointer.h>
 #include <mutex>
 #include <cstring>
 
-template<typename T>
+// It seems that C++ does not accept rcu_flavor_struct as template arguments,
+// with the error message: 'xxx' is not a valid template argument of type
+// 'void (*)()' because 'xxx' is not a variable
+template<typename T, void (*flavor_read_lock)(void),
+	void (*flavor_read_unlock)(void), void (*flavor_register_thread)(void),
+	void (*flavor_unregister_thread)(void),
+	void (*flavor_update_call_rcu)(struct rcu_head *head,
+		void (*func)(struct rcu_head *head))>
 class rcu_vector_flavor {
 public:
-	rcu_vector_flavor(const struct rcu_flavor_struct *flavor)
-		:	v_(new vec{NULL, 0, 0, rcu_head()}), flavor_(flavor) {}
+	rcu_vector_flavor() : v_(new vec{NULL, 0, 0, rcu_head()}) {}
 	~rcu_vector_flavor() {
 		delete v_;
 	}
 	void register_thread() const {
-		flavor_->register_thread();
+		flavor_register_thread();
 	}
 	void unregister_thread() const {
-		flavor_->unregister_thread();
+		flavor_unregister_thread();
 	}
 	void read_lock() const {
-		flavor_->read_lock();
+		flavor_read_lock();
 	}
 	void read_unlock() const {
-		flavor_->read_unlock();
+		flavor_read_unlock();
 	}
 	T read_copy(size_t i) {
 		read_lock();
@@ -71,7 +77,7 @@ public:
 		nv->size = v_->size + 1;
 		auto v = v_;
 		rcu_assign_pointer(v_, nv);
-		flavor_->update_call_rcu(&v->rcu, free_func);
+		flavor_update_call_rcu(&v->rcu, free_func);
 	}
 	void push_back(const T& x) {
 		lock();
@@ -96,5 +102,4 @@ private:
 		struct rcu_head rcu;
 	};
 	struct vec *v_;
-	const struct rcu_flavor_struct *flavor_;
 };
