@@ -28,6 +28,9 @@ public:
 	void unlock() {
 		lock_.unlock();
 	}
+	T& ref_locked(size_t i) {
+		return v_->s[i];
+	}
 	size_t size_locked() const {
 		return v_->size;
 	}
