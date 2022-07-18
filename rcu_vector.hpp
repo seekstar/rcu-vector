@@ -15,9 +15,24 @@ public:
 		rcu_read_unlock();
 		return ret;
 	}
-	void push_back(const T& x) {
-		void (*free_func)(struct rcu_head *);
+	size_t size() const {
+		rcu_read_lock();
+		size_t ret = rcu_dereference(v_)->size;
+		rcu_read_unlock();
+		return ret;
+	}
+
+	void lock() {
 		lock_.lock();
+	}
+	void unlock() {
+		lock_.unlock();
+	}
+	size_t size_locked() const {
+		return v_->size;
+	}
+	void push_back_locked(const T& x) {
+		void (*free_func)(struct rcu_head *);
 		auto nv = new vec;
 		if (v_->size == v_->cap) {
 			if (v_->cap == 0) {
@@ -40,14 +55,12 @@ public:
 		nv->size = v_->size + 1;
 		auto v = v_;
 		rcu_assign_pointer(v_, nv);
-		lock_.unlock();
 		call_rcu(&v->rcu, free_func);
 	}
-	size_t size() const {
-		rcu_read_lock();
-		size_t ret = rcu_dereference(v_)->size;
-		rcu_read_unlock();
-		return ret;
+	void push_back(const T& x) {
+		lock();
+		push_back_locked(x);
+		unlock();
 	}
 private:
 	static void free_vec(struct rcu_head *head) {
