@@ -1,24 +1,37 @@
-#include <urcu.h>
+#include <urcu/flavor.h>
 #include <mutex>
 #include <cstring>
 
 template<typename T>
-class rcu_vector {
+class rcu_vector_flavor {
 public:
-	rcu_vector() : v_(new vec{NULL, 0, 0, rcu_head()}) {}
-	~rcu_vector() {
+	rcu_vector_flavor(const struct rcu_flavor_struct *flavor)
+		:	v_(new vec{NULL, 0, 0, rcu_head()}), flavor_(flavor) {}
+	~rcu_vector_flavor() {
 		delete v_;
 	}
+	void register_thread() const {
+		flavor_->register_thread();
+	}
+	void unregister_thread() const {
+		flavor_->unregister_thread();
+	}
+	void read_lock() const {
+		flavor_->read_lock();
+	}
+	void read_unlock() const {
+		flavor_->read_unlock();
+	}
 	T read_copy(size_t i) {
-		rcu_read_lock();
+		read_lock();
 		T ret = rcu_dereference(v_)->s[i];
-		rcu_read_unlock();
+		read_unlock();
 		return ret;
 	}
 	size_t size() const {
-		rcu_read_lock();
+		read_lock();
 		size_t ret = rcu_dereference(v_)->size;
-		rcu_read_unlock();
+		read_unlock();
 		return ret;
 	}
 
@@ -58,7 +71,7 @@ public:
 		nv->size = v_->size + 1;
 		auto v = v_;
 		rcu_assign_pointer(v_, nv);
-		call_rcu(&v->rcu, free_func);
+		flavor_->update_call_rcu(&v->rcu, free_func);
 	}
 	void push_back(const T& x) {
 		lock();
@@ -83,4 +96,5 @@ private:
 		struct rcu_head rcu;
 	};
 	struct vec *v_;
+	const struct rcu_flavor_struct *flavor_;
 };
