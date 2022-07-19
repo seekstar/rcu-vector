@@ -13,10 +13,7 @@ extern void urcu_memb_call_rcu(struct rcu_head *head,
 template <typename T>
 class rcu_vector_memb : public rcu_vector_flavor<T, urcu_memb_read_lock,
 		urcu_memb_read_unlock, urcu_memb_register_thread,
-		urcu_memb_unregister_thread, urcu_memb_call_rcu> {
-public:
-	constexpr bool need_register_thread() override { return true; }
-};
+		urcu_memb_unregister_thread, urcu_memb_call_rcu> {};
 
 template <typename T>
 class rcu_vector : public rcu_vector_memb<T> {};

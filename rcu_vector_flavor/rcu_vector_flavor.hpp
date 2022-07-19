@@ -20,12 +20,24 @@ public:
 	~rcu_vector_flavor() {
 		delete v_;
 	}
-	virtual constexpr bool need_register_thread() = 0;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Waddress"
+	static constexpr bool need_register_thread() {
+		return flavor_register_thread != nullptr;
+	}
+	static constexpr bool need_unregister_thread() {
+		return flavor_unregister_thread != nullptr;
+	}
+#pragma GCC diagnostic pop
 	void register_thread() const {
-		flavor_register_thread();
+		if (need_register_thread()) {
+			flavor_register_thread();
+		}
 	}
 	void unregister_thread() const {
-		flavor_unregister_thread();
+		if (need_unregister_thread()) {
+			flavor_unregister_thread();
+		}
 	}
 	void read_lock() const {
 		flavor_read_lock();
