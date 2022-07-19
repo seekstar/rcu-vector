@@ -1,4 +1,8 @@
+#ifndef RCU_VECTOR_FLAVOR_H_
+#define RCU_VECTOR_FLAVOR_H_
+
 #include <urcu/pointer.h>
+#include <urcu/call-rcu.h>
 #include <mutex>
 #include <cstring>
 
@@ -103,3 +107,5 @@ private:
 	};
 	struct vec *v_;
 };
+
+#endif // RCU_VECTOR_FLAVOR_H_
