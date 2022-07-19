@@ -20,6 +20,7 @@ public:
 	~rcu_vector_flavor() {
 		delete v_;
 	}
+	virtual constexpr bool need_register_thread() = 0;
 	void register_thread() const {
 		flavor_register_thread();
 	}

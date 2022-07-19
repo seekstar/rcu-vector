@@ -13,6 +13,9 @@ extern void urcu_bp_call_rcu(struct rcu_head *head,
 template <typename T>
 class rcu_vector_bp : public rcu_vector_flavor<T, urcu_bp_read_lock,
 		urcu_bp_read_unlock, urcu_bp_register_thread, urcu_bp_unregister_thread,
-		urcu_bp_call_rcu> {};
+		urcu_bp_call_rcu> {
+public:
+	constexpr bool need_register_thread() override { return false; }
+};
 
 #endif // RCU_VECTOR_BP_H_
