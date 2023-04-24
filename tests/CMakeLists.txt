@@ -1,6 +1,6 @@
-add_executable(
-	test
-	main.cpp
+add_executable(test
+	EXCLUDE_FROM_ALL
+		main.cpp
 )
 
 target_link_libraries(test

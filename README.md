@@ -2,7 +2,17 @@
 
 ## Description
 
-Dynamically resizable vector implemented with RCU (Read-Copy-Update). Some basic tests are available here: <https://github.com/seekstar/tests-rcu-vector>
+Dynamically resizable vector implemented with RCU (Read-Copy-Update). You may check `tests/main.cpp` for example usage.
+
+## tests
+
+```shell
+mkdir build
+cd build
+cmake ..
+make test
+./tests/test
+```
 
 ## LICENSE
 
