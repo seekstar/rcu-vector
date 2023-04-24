@@ -16,4 +16,4 @@ make test
 
 ## LICENSE
 
-This software is licensed under LGPL version 3 or any later version.
+Except as otherwise noted, the files in this project are licensed under MPLv2.
