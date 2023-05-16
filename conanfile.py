@@ -9,7 +9,7 @@ class rcu_vectorRecipe(ConanFile):
     # Optional metadata
     license = "MPLv2"
     author = "Jiansheng Qiu jianshengqiu.cs@gmail.com"
-    url = "https://github.com/seekstar/rcu_vector"
+    url = "https://github.com/seekstar/rcu-vector"
     description = "Dynamically resizable vector implemented with RCU (Read-Copy-Update)."
     topics = ("RCU", "C++", "vector")
 
