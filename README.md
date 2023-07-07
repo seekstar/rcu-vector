@@ -1,18 +1,8 @@
-# rcu_vector
+# rcu-vector
 
 ## Description
 
-Dynamically resizable vector implemented with RCU (Read-Copy-Update). You may check `tests/main.cpp` for example usage.
-
-## tests
-
-```shell
-mkdir build
-cd build
-cmake ..
-make test
-./tests/test
-```
+Dynamically resizable vector implemented with RCU (Read-Copy-Update). You may check `test_package/src/main.cpp` for example usage.
 
 ## LICENSE
 
